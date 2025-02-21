@@ -14,12 +14,12 @@ class StatsOverview extends BaseWidget
 
     protected function getStats(): array
     {
-        $startDate = !is_null($this->filters['startDate'] ?? null) ?
-            Carbon::parse($this->filters['startDate']) :
-            null;
-        $endDate = !is_null($this->filters['endDate'] ?? null) ?
-            Carbon::parse($this->filters['endDate']) :
-            now();
+        $startDate = isset($this->filters['startDate']) && $this->filters['startDate']
+            ? Carbon::parse($this->filters['startDate'])
+            : now()->subDays(30);
+        $endDate = isset($this->filters['endDate']) && $this->filters['endDate']
+            ? Carbon::parse($this->filters['endDate'])
+            : now();
 
         $income = Transaction::income()->whereBetween('date_transaction', [$startDate, $endDate])->sum('amount');
         $expense = Transaction::expense()->whereBetween('date_transaction', [$startDate, $endDate])->sum('amount');
